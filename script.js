@@ -1,46 +1,63 @@
+/* ================= SAFE ELEMENT SELECTION ================= */
+
 const home = document.getElementById("home");
 const chatContainer = document.getElementById("chatContainer");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const chatItems = document.querySelectorAll(".chat");
+const examples = document.querySelectorAll(".example");
+const themeToggle = document.getElementById("themeToggle");
 
 let currentChatId = null;
 
-/* ------------------ STORAGE ------------------ */
+/* ================= BOT REPLY LOGIC ================= */
+
+function getBotReply(message) {
+
+  if (message.includes("professionally")) {
+    return "I am a Computer Engineering student passionate about web development and creative design.";
+  }
+
+  else if (message.includes("project")) {
+    return "You can explore my projects including my Portfolio Website and Clone GPT project.";
+  }
+
+  else if (message.includes("skill")) {
+    return "My key skills include HTML, CSS, JavaScript, Flutter, and UI Design.";
+  }
+
+  else if (message.includes("achievement")) {
+    return "I am proud of building real-world projects and continuously improving my technical skills.";
+  }
+
+  else {
+    return "I'm still learning! Try asking about my skills, projects, or achievements 😊";
+  }
+}
+
+/* ================= STORAGE ================= */
 
 const defaultChats = {
-  professional: [
-    { sender: "bot", text: "This is my professional resume in chat format." },
-    { sender: "user", text: "What is your educational background?" },
-    { sender: "bot", text: "I am pursuing Computer Science with a strong focus on fundamentals and development." },
-    { sender: "user", text: "What is your CGPA?" },
-    { sender: "bot", text: "I have maintained a consistent CGPA reflecting discipline and problem-solving ability." }
-  ],
-  experiences: [
-    { sender: "bot", text: "Here are my experiences so far." },
-    { sender: "user", text: "Have you worked on real projects?" },
-    { sender: "bot", text: "Yes, I have built multiple UI-focused and logic-driven projects." }
-  ],
-  fun: [
-    { sender: "bot", text: "This is my not-so-professional side 😄" },
-    { sender: "user", text: "What do you enjoy outside work?" },
-    { sender: "bot", text: "Designing aesthetic things, journaling, and exploring ideas." }
-  ]
+  professional: [],
+  experiences: [],
+  fun: []
 };
 
 let chats = JSON.parse(localStorage.getItem("chats")) || defaultChats;
-
-/* ------------------ HELPERS ------------------ */
 
 function saveChats() {
   localStorage.setItem("chats", JSON.stringify(chats));
 }
 
+/* ================= HELPERS ================= */
+
 function clearChatUI() {
-  chatContainer.innerHTML = "";
+  if (chatContainer) chatContainer.innerHTML = "";
 }
 
 function addMessage(text, sender) {
+  if (!chatContainer) return;
+
   const msg = document.createElement("div");
   msg.className = `message ${sender}`;
   msg.textContent = text;
@@ -52,48 +69,116 @@ function loadChat(chatId) {
   currentChatId = chatId;
   clearChatUI();
 
-  home.classList.add("hidden");
-  chatContainer.classList.remove("hidden");
+  if (home) home.classList.add("hidden");
+  if (chatContainer) chatContainer.classList.remove("hidden");
 
-  chats[chatId].forEach(msg => {
-    addMessage(msg.text, msg.sender);
+  if (chats[chatId]) {
+    chats[chatId].forEach(msg => {
+      addMessage(msg.text, msg.sender);
+    });
+  }
+}
+
+/* ================= SIDEBAR CLICK ================= */
+
+if (chatItems.length > 0) {
+  chatItems.forEach(item => {
+    item.addEventListener("click", () => {
+      chatItems.forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+
+      const chatId = item.dataset.chat;
+      if (chatId) loadChat(chatId);
+    });
   });
 }
 
-/* ------------------ SIDEBAR CHAT CLICK ------------------ */
-
-chatItems.forEach(item => {
-  item.addEventListener("click", () => {
-    chatItems.forEach(i => i.classList.remove("active"));
-    item.classList.add("active");
-
-    const chatId = item.dataset.chat;
-    loadChat(chatId);
-  });
-});
-
-/* ------------------ SEND MESSAGE ------------------ */
+/* ================= SEND MESSAGE ================= */
 
 function sendMessage() {
+  if (!userInput) return;
+
   const text = userInput.value.trim();
   if (!text || !currentChatId) return;
 
-  // user message
   chats[currentChatId].push({ sender: "user", text });
   addMessage(text, "user");
   userInput.value = "";
   saveChats();
 
-  // fake bot reply (you can replace later)
   setTimeout(() => {
-    const reply = "Got it 👍 This answer will be portfolio-specific.";
+    const reply = getBotReply(text.toLowerCase());
     chats[currentChatId].push({ sender: "bot", text: reply });
     addMessage(reply, "bot");
     saveChats();
   }, 600);
 }
 
-sendBtn.addEventListener("click", sendMessage);
-userInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMessage();
+if (sendBtn && userInput) {
+  sendBtn.addEventListener("click", sendMessage);
+
+  userInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") sendMessage();
+  });
+}
+
+/* ================= EXAMPLE CLICK ================= */
+
+if (examples.length > 0) {
+  examples.forEach(example => {
+    example.addEventListener("click", function () {
+
+      if (!userInput) return;
+
+      userInput.value = this.innerText;
+
+      if (!currentChatId) {
+        loadChat("professional");
+        const firstChat = document.querySelector('[data-chat="professional"]');
+        if (firstChat) firstChat.classList.add("active");
+      }
+
+      sendMessage();
+    });
+  });
+}
+
+/* ================= THEME TOGGLE ================= */
+
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+
+    document.body.classList.toggle("light-mode");
+
+    if (document.body.classList.contains("light-mode")) {
+      localStorage.setItem("theme", "light");
+      themeToggle.textContent = "☀ Light Mode";
+    } else {
+      localStorage.setItem("theme", "dark");
+      themeToggle.textContent = "🌙 Dark Mode";
+    }
+  });
+}
+
+/* ================= LOAD SAVED THEME ================= */
+
+window.addEventListener("DOMContentLoaded", () => {
+  const savedTheme = localStorage.getItem("theme");
+
+  if (savedTheme === "light") {
+    document.body.classList.add("light-mode");
+    if (themeToggle) themeToggle.textContent = "☀ Light Mode";
+  } else {
+    if (themeToggle) themeToggle.textContent = "🌙 Dark Mode";
+  }
 });
+const clearBtn = document.getElementById("clearChat");
+
+if (clearBtn) {
+  clearBtn.addEventListener("click", () => {
+    if (!currentChatId) return;
+    chats[currentChatId] = [];
+    saveChats();
+    clearChatUI();
+  });
+}

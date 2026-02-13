@@ -14,18 +14,26 @@
 
 <body class="professional-page">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-top">
-      <div class="logo">◎</div>
-      <a href="../index.html" class="sidebar-item">✏ New chat</a>
+      <div class="logo">
+          <img src="../assets/logo.png" alt="Logo">
+      </div>
+
+      <div class="sidebar-item" onclick="location.href='../index.html'">
+  ✏ New chat
+</div>
+      <div class="sidebar-item">🔍 Search chats</div>
+      <div class="sidebar-item">🖼 Images</div>
+      <div class="sidebar-item">🧩 Apps</div>
+      <div class="sidebar-item" id="themeToggle">🌙 Toggle Theme</div>
     </div>
 
     <div class="sidebar-section">
-      <p>Your chats</p>
-      <div class="sidebar-item active">Professional Resume</div>
-      <a href="../index.html" class="sidebar-item">Non-Professional</a>
-      <a href="../index.html" class="sidebar-item">Live With Me</a>
+      <p>Projects</p>
+      <div class="sidebar-item chat active" onclick="location.href='pages/professional.html'">Professional</div>
+      <div class="sidebar-item chat">Non-Professional</div>
+      <div class="sidebar-item chat">Come Live with me</div>
     </div>
 
     <div class="sidebar-bottom">
@@ -41,16 +49,33 @@
     <div class="chat-container">
       <div class="chat-column">
 
-        <div class="message bot">
-          This chat represents my professional resume in a conversational format.
-        </div>
 
         <div class="message user">
           Can you tell me about your educational background?
         </div>
 
         <div class="message bot">
-          I am currently pursuing a Bachelor's degree in Computer Science, with a focus on Data Structures & Algorithms, Web Development, and core computer science fundamentals.
+        <h1>Academic Profile</h1>
+<br>
+FR. Conceicao Rodrigues College of Engineering (FR.CRCE)<br>
+Bachelor of Technology (BTech) in Computer Engineering<br>
+First Year<br>
+CGPA: 9.1<br>
+<br>
+<h3>Higher Secondary Education</h3><br>
+GMS Holy Family Junior College of Science and Commerce<br>
+Higher Secondary Certificate (HSC)<br>
+Score: 82%<br>
+<br>
+<h3>Entrance Examinations</h3><br>
+
+MH-CET: 97.19 Percentile<br>
+
+JEE Main: 88 Percentile<br>
+<br>
+Little Flower High School (LFHS)<br>
+Secondary School Certificate (SSC)<br>
+Score: 86%<br>
         </div>
 
         <div class="message user">
@@ -88,6 +113,7 @@
       </div>
     </div>
   </div>
+<script src="../script.js"></script>
 
 </body>
 </html>
